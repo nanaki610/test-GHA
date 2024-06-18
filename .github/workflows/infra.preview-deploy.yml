@@ -42,3 +42,5 @@ jobs:
           role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
       - name: "Terraform init"
         run: terraform init -no-color
+      - name: "Terraform validate"
+        run: terraform validate -no-color
