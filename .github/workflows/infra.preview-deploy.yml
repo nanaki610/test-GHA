@@ -112,7 +112,8 @@ jobs:
         role-to-assume: ${{ secrets.AWS_IAM_ROLE_ARN }}
     - name: "Terraform init"
       run: terraform init -no-color
-    - name: Terraform apply
+    - name: "Terraform apply"
+      id: apply
       run: |
         terraform apply \
           -var 'project=${{ env.TF_PROJECT}}' \
@@ -122,3 +123,34 @@ jobs:
           -input=false \
           -no-color \
           -auto-approve
+    - name: "Slack Notify"
+      if: always()
+      uses: slackapi/slack-github-action@v1.26.0
+      with:
+        channel-id: "C078L3NUYRK"
+        payload: |
+          {
+            "attachments": [
+              {
+                "blocks": [
+                  {
+                    "type": "header",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "Runner finished: ${{steps.apply.outcome}}",
+                      "emoji": true
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "${{github.server_url}}/${{github.repository}}/actions/runs/${{github.run_id}}"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
