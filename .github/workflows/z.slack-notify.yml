@@ -11,7 +11,7 @@ jobs:
       - name: "Slack Notify"
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          channel-id: "C079BPRR9T2"
+          channel-id: "C078L3NUYRK"
           payload: |
             {
               "attachments": [
